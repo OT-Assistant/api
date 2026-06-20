@@ -16,25 +16,31 @@ const app = new Hono<{ Bindings: Bindings; Variables: AppVariables }>();
 app.use('*', async (c, next) => {
   const corsMiddleware = cors({
     origin: (origin) => {
-      // If CORS_ORIGIN is specifically set and is not '*', use it
-      if (c.env.CORS_ORIGIN && c.env.CORS_ORIGIN !== '*') {
-        return c.env.CORS_ORIGIN;
-      }
-      // If no origin header is present, default to localhost
       if (!origin) return 'http://localhost:4200';
-      // Allow localhost, the specified Netlify domains, and any netlify.app subdomains
-      if (
-        origin === 'http://localhost:4200' ||
-        origin === 'https://ot-assitant.netlify.app' ||
-        origin === 'https://ot-assistant.netlify.app' ||
-        origin === 'https://ot-assistant.otconnect.ir' ||
-        origin === 'http://ot-assistant.otconnect.ir' ||
-        origin.endsWith('.netlify.app')
-      ) {
+
+      const allowedOrigins = [
+        'http://localhost:4200',
+        'https://ot-assitant.netlify.app',
+        'https://ot-assistant.netlify.app',
+        'https://ot-assistant.otconnect.ir',
+        'http://ot-assistant.otconnect.ir'
+      ];
+
+      if (allowedOrigins.includes(origin) || origin.endsWith('.netlify.app')) {
         return origin;
       }
-      // Fallback to CORS_ORIGIN or default
-      return c.env.CORS_ORIGIN || 'http://localhost:4200';
+
+      if (c.env.CORS_ORIGIN) {
+        if (c.env.CORS_ORIGIN === '*') {
+          return origin;
+        }
+        const envOrigins = c.env.CORS_ORIGIN.split(',').map(o => o.trim());
+        if (envOrigins.includes(origin)) {
+          return origin;
+        }
+      }
+
+      return 'http://localhost:4200';
     },
     allowHeaders: ['Content-Type', 'Authorization'],
     allowMethods: ['POST', 'GET', 'OPTIONS', 'PATCH', 'PUT', 'DELETE'],
