@@ -24,7 +24,9 @@ app.use('*', async (c, next) => {
         'https://ot-assitant.netlify.app',
         'https://ot-assistant.netlify.app',
         'https://ot-assistant.otconnect.ir',
-        'http://ot-assistant.otconnect.ir'
+        'http://ot-assistant.otconnect.ir',
+        'https://ot-api-dev.otconnect.ir',
+        'http://ot-api-dev.otconnect.ir'
       ];
 
       if (allowedOrigins.includes(origin) || origin.endsWith('.netlify.app')) {
