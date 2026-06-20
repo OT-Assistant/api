@@ -27,6 +27,8 @@ app.use('*', async (c, next) => {
         origin === 'http://localhost:4200' ||
         origin === 'https://ot-assitant.netlify.app' ||
         origin === 'https://ot-assistant.netlify.app' ||
+        origin === 'https://ot-assistant.otconnect.ir' ||
+        origin === 'http://ot-assistant.otconnect.ir' ||
         origin.endsWith('.netlify.app')
       ) {
         return origin;
