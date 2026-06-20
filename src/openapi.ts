@@ -7,10 +7,6 @@ export const openapiSpec = {
   },
   servers: [
     {
-      url: "http://localhost:8787",
-      description: "Local Development Server"
-    },
-    {
       url: "https://ot-api-dev.otconnect.ir",
       description: "Production Server"
     }
