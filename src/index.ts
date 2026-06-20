@@ -15,7 +15,25 @@ const app = new Hono<{ Bindings: Bindings; Variables: AppVariables }>();
 
 app.use('*', async (c, next) => {
   const corsMiddleware = cors({
-    origin: c.env.CORS_ORIGIN || 'http://localhost:4200',
+    origin: (origin) => {
+      // If CORS_ORIGIN is specifically set and is not '*', use it
+      if (c.env.CORS_ORIGIN && c.env.CORS_ORIGIN !== '*') {
+        return c.env.CORS_ORIGIN;
+      }
+      // If no origin header is present, default to localhost
+      if (!origin) return 'http://localhost:4200';
+      // Allow localhost, the specified Netlify domains, and any netlify.app subdomains
+      if (
+        origin === 'http://localhost:4200' ||
+        origin === 'https://ot-assitant.netlify.app' ||
+        origin === 'https://ot-assistant.netlify.app' ||
+        origin.endsWith('.netlify.app')
+      ) {
+        return origin;
+      }
+      // Fallback to CORS_ORIGIN or default
+      return c.env.CORS_ORIGIN || 'http://localhost:4200';
+    },
     allowHeaders: ['Content-Type', 'Authorization'],
     allowMethods: ['POST', 'GET', 'OPTIONS', 'PATCH', 'PUT', 'DELETE'],
     maxAge: 600,
